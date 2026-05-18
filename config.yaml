@@ -1,0 +1,58 @@
+# DebugPilot Configuration
+
+analysis:
+  max_context_lines: 50
+  include_reference_links: true
+  confidence_threshold: 0.7
+  max_frames_shown: 5
+
+languages:
+  python:
+    traceback_pattern: "Traceback \\(most recent call last\\):"
+    file_line_pattern: '  File "([^"]+)", line (\\d+)'
+    error_pattern: "(\\w+Error): (.+)"
+  javascript:
+    stack_pattern: "at (.+) \\((.+):(\\d+):(\\d+)\\)"
+    error_types:
+      - ReferenceError
+      - TypeError
+      - SyntaxError
+      - RangeError
+      - Error
+  go:
+    panic_pattern: "^panic: (.+)"
+    goroutine_pattern: "^goroutine \\d+ \\["
+    file_line_pattern: "^(\\S+\\.go):(\\d+)"
+  rust:
+    panic_pattern: "thread '[^']+' panicked at"
+    location_pattern: "---> (.+):(\\d+)"
+  php:
+    fatal_pattern: "^(Fatal error|Parse error|Warning|Notice): (.+)"
+    stack_pattern: "#\\d+ (.+) in (.+) on line (\\d+)"
+  ruby:
+    traceback_pattern: "from (.+\\.rb):(\\d+)"
+    error_pattern: "^(\\w+Error): (.+)"
+
+output:
+  default_format: markdown
+  color: true
+  include_stack: true
+
+# Common fix templates
+fixes:
+  pip_install: |
+    pip install <package-name>
+    source venv/bin/activate  # Linux/Mac
+    venv\\Scripts\\activate    # Windows
+  npm_install: |
+    npm install <package-name>
+    # Or for specific version
+    npm install <package>@latest
+  check_server: |
+    1. Check server running: ps aux | grep <server>
+    2. Verify host/port: curl localhost:<port>
+    3. Check firewall: sudo ufw status
+  check_permissions: |
+    1. Check permissions: ls -la <path>
+    2. Fix: chmod 644 <file> or chmod 755 <dir>
+    3. Check ownership: chown user:group <path>
